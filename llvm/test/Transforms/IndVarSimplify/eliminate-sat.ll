@@ -128,7 +128,7 @@ define void @ushl_sat(ptr %p) {
 ; CHECK-NEXT:    br label [[LOOP:%.*]]
 ; CHECK:       loop:
 ; CHECK-NEXT:    [[I:%.*]] = phi i32 [ 0, [[ENTRY:%.*]] ], [ [[I_INC:%.*]], [[LOOP]] ]
-; CHECK-NEXT:    [[SAT1:%.*]] = call i32 @llvm.ushl.sat.i32(i32 [[I]], i32 1)
+; CHECK-NEXT:    [[SAT1:%.*]] = shl nuw nsw i32 [[I]], 1
 ; CHECK-NEXT:    store volatile i32 [[SAT1]], ptr [[P:%.*]], align 4
 ; CHECK-NEXT:    [[I_INC]] = add nuw nsw i32 [[I]], 1
 ; CHECK-NEXT:    [[CMP:%.*]] = icmp ne i32 [[I_INC]], 100
@@ -157,7 +157,7 @@ define void @sshl_sat(ptr %p) {
 ; CHECK-NEXT:    br label [[LOOP:%.*]]
 ; CHECK:       loop:
 ; CHECK-NEXT:    [[I:%.*]] = phi i32 [ -50, [[ENTRY:%.*]] ], [ [[I_INC:%.*]], [[LOOP]] ]
-; CHECK-NEXT:    [[SAT1:%.*]] = call i32 @llvm.sshl.sat.i32(i32 [[I]], i32 1)
+; CHECK-NEXT:    [[SAT1:%.*]] = shl nsw i32 [[I]], 1
 ; CHECK-NEXT:    store volatile i32 [[SAT1]], ptr [[P:%.*]], align 4
 ; CHECK-NEXT:    [[I_INC]] = add nsw i32 [[I]], 1
 ; CHECK-NEXT:    [[CMP:%.*]] = icmp ne i32 [[I_INC]], 50

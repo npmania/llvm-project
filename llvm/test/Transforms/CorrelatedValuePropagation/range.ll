@@ -1358,7 +1358,7 @@ target:
 define i8 @ushl_sat_unknown_rhs(i8 range(i8 0, 2) %x, i8 %y) {
 ; CHECK-LABEL: define range(i8 0, -127) i8 @ushl_sat_unknown_rhs(
 ; CHECK-SAME: i8 range(i8 0, 2) [[X:%.*]], i8 [[Y:%.*]]) {
-; CHECK-NEXT:    [[RES:%.*]] = call i8 @llvm.ushl.sat.i8(i8 [[X]], i8 [[Y]])
+; CHECK-NEXT:    [[RES:%.*]] = shl nuw i8 [[X]], [[Y]]
 ; CHECK-NEXT:    ret i8 [[RES]]
 ;
   %res = call i8 @llvm.ushl.sat.i8(i8 %x, i8 %y)
@@ -1386,9 +1386,9 @@ define i8 @sshl_sat_neg_unknown_rhs(i8 range(i8 -10, -2) %x, i8 %y) {
 }
 
 define i8 @sshl_sat_partial_oob_rhs(i8 range(i8 -10, 3) %x, i8 range(i8 8, 3) %y) {
-; CHECK-LABEL: define range(i8 -40, 9) i8 @sshl_sat_partial_oob_rhs(
+; CHECK-LABEL: define range(i8 -128, 65) i8 @sshl_sat_partial_oob_rhs(
 ; CHECK-SAME: i8 range(i8 -10, 3) [[X:%.*]], i8 range(i8 8, 3) [[Y:%.*]]) {
-; CHECK-NEXT:    [[RES:%.*]] = call i8 @llvm.sshl.sat.i8(i8 [[X]], i8 [[Y]])
+; CHECK-NEXT:    [[RES:%.*]] = shl nsw i8 [[X]], [[Y]]
 ; CHECK-NEXT:    ret i8 [[RES]]
 ;
   %res = call i8 @llvm.sshl.sat.i8(i8 %x, i8 %y)
