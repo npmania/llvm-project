@@ -1183,3 +1183,57 @@ join:
   %res = call i8 @llvm.uadd.sat.i8(i8 %phi, i8 100)
   ret i8 %res
 }
+
+define i8 @ushl_sat_no_unsigned_overflow(i8 range(i8 0, 64) %x) {
+; CHECK-LABEL: @ushl_sat_no_unsigned_overflow(
+; CHECK-NEXT:    [[RES1:%.*]] = call i8 @llvm.ushl.sat.i8(i8 [[X:%.*]], i8 2)
+; CHECK-NEXT:    ret i8 [[RES1]]
+;
+  %res = call i8 @llvm.ushl.sat.i8(i8 %x, i8 2)
+  ret i8 %res
+}
+
+define i8 @ushl_sat_no_overflow(i8 range(i8 0, 32) %x) {
+; CHECK-LABEL: @ushl_sat_no_overflow(
+; CHECK-NEXT:    [[RES1:%.*]] = call i8 @llvm.ushl.sat.i8(i8 [[X:%.*]], i8 2)
+; CHECK-NEXT:    ret i8 [[RES1]]
+;
+  %res = call i8 @llvm.ushl.sat.i8(i8 %x, i8 2)
+  ret i8 %res
+}
+
+define i8 @ushl_sat_may_overflow(i8 range(i8 0, 65) %x) {
+; CHECK-LABEL: @ushl_sat_may_overflow(
+; CHECK-NEXT:    [[RES:%.*]] = call i8 @llvm.ushl.sat.i8(i8 [[X:%.*]], i8 2)
+; CHECK-NEXT:    ret i8 [[RES]]
+;
+  %res = call i8 @llvm.ushl.sat.i8(i8 %x, i8 2)
+  ret i8 %res
+}
+
+define i8 @sshl_sat_no_signed_overflow(i8 range(i8 -32, 32) %x) {
+; CHECK-LABEL: @sshl_sat_no_signed_overflow(
+; CHECK-NEXT:    [[RES1:%.*]] = call i8 @llvm.sshl.sat.i8(i8 [[X:%.*]], i8 2)
+; CHECK-NEXT:    ret i8 [[RES1]]
+;
+  %res = call i8 @llvm.sshl.sat.i8(i8 %x, i8 2)
+  ret i8 %res
+}
+
+define i8 @sshl_sat_no_overflow(i8 range(i8 0, 32) %x) {
+; CHECK-LABEL: @sshl_sat_no_overflow(
+; CHECK-NEXT:    [[RES1:%.*]] = call i8 @llvm.sshl.sat.i8(i8 [[X:%.*]], i8 2)
+; CHECK-NEXT:    ret i8 [[RES1]]
+;
+  %res = call i8 @llvm.sshl.sat.i8(i8 %x, i8 2)
+  ret i8 %res
+}
+
+define i8 @sshl_sat_may_overflow(i8 range(i8 -32, 33) %x) {
+; CHECK-LABEL: @sshl_sat_may_overflow(
+; CHECK-NEXT:    [[RES:%.*]] = call i8 @llvm.sshl.sat.i8(i8 [[X:%.*]], i8 2)
+; CHECK-NEXT:    ret i8 [[RES]]
+;
+  %res = call i8 @llvm.sshl.sat.i8(i8 %x, i8 2)
+  ret i8 %res
+}
