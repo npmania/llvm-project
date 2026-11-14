@@ -781,7 +781,7 @@ public:
 };
 
 /// This class represents an intrinsic that is based on a binary operation.
-/// This includes op.with.overflow and saturating add/sub intrinsics.
+/// This includes op.with.overflow and saturating add/sub/shl intrinsics.
 class BinaryOpIntrinsic : public IntrinsicInst {
 public:
   static bool classof(const IntrinsicInst *I) {
@@ -796,6 +796,8 @@ public:
     case Intrinsic::sadd_sat:
     case Intrinsic::usub_sat:
     case Intrinsic::ssub_sat:
+    case Intrinsic::ushl_sat:
+    case Intrinsic::sshl_sat:
       return true;
     default:
       return false;
@@ -839,7 +841,7 @@ public:
   }
 };
 
-/// Represents a saturating add/sub intrinsic.
+/// Represents a saturating add/sub/shl intrinsic.
 class SaturatingInst : public BinaryOpIntrinsic {
 public:
   static bool classof(const IntrinsicInst *I) {
@@ -848,6 +850,8 @@ public:
     case Intrinsic::sadd_sat:
     case Intrinsic::usub_sat:
     case Intrinsic::ssub_sat:
+    case Intrinsic::ushl_sat:
+    case Intrinsic::sshl_sat:
       return true;
     default:
       return false;

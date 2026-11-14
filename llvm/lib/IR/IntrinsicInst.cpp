@@ -566,6 +566,9 @@ Instruction::BinaryOps BinaryOpIntrinsic::getBinaryOp() const {
   case Intrinsic::umul_with_overflow:
   case Intrinsic::smul_with_overflow:
     return Instruction::Mul;
+  case Intrinsic::ushl_sat:
+  case Intrinsic::sshl_sat:
+    return Instruction::Shl;
   default:
     llvm_unreachable("Invalid intrinsic");
   }
@@ -578,6 +581,7 @@ bool BinaryOpIntrinsic::isSigned() const {
   case Intrinsic::smul_with_overflow:
   case Intrinsic::sadd_sat:
   case Intrinsic::ssub_sat:
+  case Intrinsic::sshl_sat:
     return true;
   default:
     return false;
