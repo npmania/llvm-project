@@ -195,6 +195,90 @@ define i32 @knownbits_fshr(i32 %a0) nounwind {
 declare i32 @llvm.fshl.i32(i32, i32, i32) nounwind readnone
 declare i32 @llvm.fshr.i32(i32, i32, i32) nounwind readnone
 
+define i32 @knownbits_sshl_sat(i32 %a0, i32 %a1) nounwind {
+; X86-LABEL: knownbits_sshl_sat:
+; X86:       # %bb.0:
+; X86-NEXT:    pushl %edi
+; X86-NEXT:    pushl %esi
+; X86-NEXT:    movzbl {{[0-9]+}}(%esp), %ecx
+; X86-NEXT:    movl $2147483647, %edx # imm = 0x7FFFFFFF
+; X86-NEXT:    andl {{[0-9]+}}(%esp), %edx
+; X86-NEXT:    movl %edx, %esi
+; X86-NEXT:    shll %cl, %esi
+; X86-NEXT:    movl %esi, %edi
+; X86-NEXT:    sarl %cl, %edi
+; X86-NEXT:    xorl %eax, %eax
+; X86-NEXT:    testl %edx, %edx
+; X86-NEXT:    sets %al
+; X86-NEXT:    addl $2147483647, %eax # imm = 0x7FFFFFFF
+; X86-NEXT:    cmpl %edi, %edx
+; X86-NEXT:    cmovel %esi, %eax
+; X86-NEXT:    shrl $31, %eax
+; X86-NEXT:    popl %esi
+; X86-NEXT:    popl %edi
+; X86-NEXT:    retl
+;
+; X64-LABEL: knownbits_sshl_sat:
+; X64:       # %bb.0:
+; X64-NEXT:    movl %esi, %ecx
+; X64-NEXT:    andl $2147483647, %edi # imm = 0x7FFFFFFF
+; X64-NEXT:    movl %edi, %edx
+; X64-NEXT:    shll %cl, %edx
+; X64-NEXT:    movl %edx, %esi
+; X64-NEXT:    # kill: def $cl killed $cl killed $ecx
+; X64-NEXT:    sarl %cl, %esi
+; X64-NEXT:    xorl %eax, %eax
+; X64-NEXT:    testl %edi, %edi
+; X64-NEXT:    sets %al
+; X64-NEXT:    addl $2147483647, %eax # imm = 0x7FFFFFFF
+; X64-NEXT:    cmpl %esi, %edi
+; X64-NEXT:    cmovel %edx, %eax
+; X64-NEXT:    shrl $31, %eax
+; X64-NEXT:    retq
+  %x = and i32 %a0, 2147483647
+  %s = call i32 @llvm.sshl.sat.i32(i32 %x, i32 %a1)
+  %r = lshr i32 %s, 31
+  ret i32 %r
+}
+
+define i32 @knownbits_ushl_sat(i32 %a0, i32 %a1) nounwind {
+; X86-LABEL: knownbits_ushl_sat:
+; X86:       # %bb.0:
+; X86-NEXT:    pushl %esi
+; X86-NEXT:    movzbl {{[0-9]+}}(%esp), %ecx
+; X86-NEXT:    movl $-2147483648, %eax # imm = 0x80000000
+; X86-NEXT:    orl {{[0-9]+}}(%esp), %eax
+; X86-NEXT:    movl %eax, %edx
+; X86-NEXT:    shll %cl, %edx
+; X86-NEXT:    movl %edx, %esi
+; X86-NEXT:    shrl %cl, %esi
+; X86-NEXT:    cmpl %esi, %eax
+; X86-NEXT:    movl $-1, %eax
+; X86-NEXT:    cmovel %edx, %eax
+; X86-NEXT:    shrl $31, %eax
+; X86-NEXT:    popl %esi
+; X86-NEXT:    retl
+;
+; X64-LABEL: knownbits_ushl_sat:
+; X64:       # %bb.0:
+; X64-NEXT:    movl %esi, %ecx
+; X64-NEXT:    orl $-2147483648, %edi # imm = 0x80000000
+; X64-NEXT:    movl %edi, %edx
+; X64-NEXT:    shll %cl, %edx
+; X64-NEXT:    movl %edx, %eax
+; X64-NEXT:    # kill: def $cl killed $cl killed $ecx
+; X64-NEXT:    shrl %cl, %eax
+; X64-NEXT:    cmpl %eax, %edi
+; X64-NEXT:    movl $-1, %eax
+; X64-NEXT:    cmovel %edx, %eax
+; X64-NEXT:    shrl $31, %eax
+; X64-NEXT:    retq
+  %x = or i32 %a0, -2147483648
+  %s = call i32 @llvm.ushl.sat.i32(i32 %x, i32 %a1)
+  %r = lshr i32 %s, 31
+  ret i32 %r
+}
+
 define i32 @knownbits_add_self_lsb(i32 %a0) nounwind {
 ; CHECK-LABEL: knownbits_add_self_lsb:
 ; CHECK:       # %bb.0:
