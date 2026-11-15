@@ -4,12 +4,7 @@
 define i1 @ushl_sat_overflow(i8 %x, i8 %y) {
 ; CHECK-LABEL: define i1 @ushl_sat_overflow(
 ; CHECK-SAME: i8 [[X:%.*]], i8 [[Y:%.*]]) {
-; CHECK-NEXT:    [[LHS:%.*]] = or i8 [[X]], -128
-; CHECK-NEXT:    [[YY:%.*]] = and i8 [[Y]], 7
-; CHECK-NEXT:    [[RHS:%.*]] = or i8 [[YY]], 1
-; CHECK-NEXT:    [[EXP:%.*]] = call i8 @llvm.ushl.sat.i8(i8 [[LHS]], i8 [[RHS]])
-; CHECK-NEXT:    [[R:%.*]] = icmp eq i8 [[EXP]], -2
-; CHECK-NEXT:    ret i1 [[R]]
+; CHECK-NEXT:    ret i1 false
 ;
   %lhs = or i8 %x, -128
   %yy = and i8 %y, 7
@@ -40,13 +35,7 @@ define i1 @ushl_sat_overflow_fail(i8 %x, i8 %y) {
 define i1 @sshl_sat_overflow_pos(i8 %x, i8 %y) {
 ; CHECK-LABEL: define i1 @sshl_sat_overflow_pos(
 ; CHECK-SAME: i8 [[X:%.*]], i8 [[Y:%.*]]) {
-; CHECK-NEXT:    [[XX:%.*]] = and i8 [[X]], 127
-; CHECK-NEXT:    [[YY:%.*]] = and i8 [[Y]], 7
-; CHECK-NEXT:    [[LHS:%.*]] = or i8 [[XX]], 64
-; CHECK-NEXT:    [[RHS:%.*]] = or i8 [[YY]], 1
-; CHECK-NEXT:    [[EXP:%.*]] = call i8 @llvm.sshl.sat.i8(i8 [[LHS]], i8 [[RHS]])
-; CHECK-NEXT:    [[R:%.*]] = icmp eq i8 [[EXP]], 126
-; CHECK-NEXT:    ret i1 [[R]]
+; CHECK-NEXT:    ret i1 false
 ;
   %xx = and i8 %x, 127
   %yy = and i8 %y, 7
@@ -60,13 +49,7 @@ define i1 @sshl_sat_overflow_pos(i8 %x, i8 %y) {
 define i1 @sshl_sat_low_bits(i8 %x, i8 %y) {
 ; CHECK-LABEL: define i1 @sshl_sat_low_bits(
 ; CHECK-SAME: i8 [[X:%.*]], i8 [[Y:%.*]]) {
-; CHECK-NEXT:    [[LHS:%.*]] = and i8 [[X]], 15
-; CHECK-NEXT:    [[YY:%.*]] = and i8 [[Y]], 3
-; CHECK-NEXT:    [[RHS:%.*]] = or i8 [[YY]], 1
-; CHECK-NEXT:    [[EXP:%.*]] = call i8 @llvm.sshl.sat.i8(i8 [[LHS]], i8 [[RHS]])
-; CHECK-NEXT:    [[AND:%.*]] = and i8 [[EXP]], 1
-; CHECK-NEXT:    [[R:%.*]] = icmp eq i8 [[AND]], 1
-; CHECK-NEXT:    ret i1 [[R]]
+; CHECK-NEXT:    ret i1 false
 ;
   %lhs = and i8 %x, 15
   %yy = and i8 %y, 3
@@ -98,13 +81,7 @@ define i1 @sshl_sat_fail_may_overflow(i8 %x, i8 %y) {
 define i1 @sshl_sat_overflow_neg(i8 %x, i8 %y) {
 ; CHECK-LABEL: define i1 @sshl_sat_overflow_neg(
 ; CHECK-SAME: i8 [[X:%.*]], i8 [[Y:%.*]]) {
-; CHECK-NEXT:    [[XX:%.*]] = and i8 [[X]], -65
-; CHECK-NEXT:    [[YY:%.*]] = and i8 [[Y]], 7
-; CHECK-NEXT:    [[LHS:%.*]] = or i8 [[XX]], -128
-; CHECK-NEXT:    [[RHS:%.*]] = or i8 [[YY]], 1
-; CHECK-NEXT:    [[EXP:%.*]] = call i8 @llvm.sshl.sat.i8(i8 [[LHS]], i8 [[RHS]])
-; CHECK-NEXT:    [[R:%.*]] = icmp eq i8 [[EXP]], -64
-; CHECK-NEXT:    ret i1 [[R]]
+; CHECK-NEXT:    ret i1 false
 ;
   %xx = and i8 %x, -65
   %yy = and i8 %y, 7

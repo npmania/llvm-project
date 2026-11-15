@@ -2361,6 +2361,16 @@ static void computeKnownBitsFromOperator(const Operator *I,
         computeKnownBits(I->getOperand(1), DemandedElts, Known2, Q, Depth + 1);
         Known = KnownBits::ssub_sat(Known, Known2);
         break;
+      case Intrinsic::ushl_sat:
+        computeKnownBits(I->getOperand(0), DemandedElts, Known, Q, Depth + 1);
+        computeKnownBits(I->getOperand(1), DemandedElts, Known2, Q, Depth + 1);
+        Known = KnownBits::ushl_sat(Known, Known2);
+        break;
+      case Intrinsic::sshl_sat:
+        computeKnownBits(I->getOperand(0), DemandedElts, Known, Q, Depth + 1);
+        computeKnownBits(I->getOperand(1), DemandedElts, Known2, Q, Depth + 1);
+        Known = KnownBits::sshl_sat(Known, Known2);
+        break;
         // Vec reverse preserves bits from input vec.
       case Intrinsic::vector_reverse:
         computeKnownBits(I->getOperand(0), DemandedElts.reverseBits(), Known, Q,
