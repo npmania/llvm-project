@@ -10871,7 +10871,7 @@ static ConstantRange getRangeForIntrinsic(const IntrinsicInst &II,
     break;
   case Intrinsic::ushl_sat:
     if (match(II.getOperand(0), m_APInt(C)))
-      return ConstantRange::getNonEmpty(*C, APInt::getZero(Width));
+      return ConstantRange::getNonEmpty(*C, C->ushl_sat(Width - 1) + 1);
     break;
   case Intrinsic::sshl_sat:
     if (match(II.getOperand(0), m_APInt(C))) {
