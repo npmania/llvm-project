@@ -653,7 +653,8 @@ define i1 @ptrtoint_diff_non_equal_larger_addrsize(ptr addrspace(1) %p0, ptr add
 ; CHECK-NEXT:    [[DIFF:%.*]] = sub i64 [[I0]], [[I1]]
 ; CHECK-NEXT:    [[COND:%.*]] = icmp eq i64 [[DIFF]], 12
 ; CHECK-NEXT:    call void @llvm.assume(i1 [[COND]])
-; CHECK-NEXT:    ret i1 false
+; CHECK-NEXT:    [[CMP:%.*]] = icmp eq ptr addrspace(1) [[P0]], [[P1]]
+; CHECK-NEXT:    ret i1 [[CMP]]
 ;
   %i0 = ptrtoint ptr addrspace(1) %p0 to i64
   %i1 = ptrtoint ptr addrspace(1) %p1 to i64

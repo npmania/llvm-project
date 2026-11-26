@@ -8431,16 +8431,20 @@ isImpliedCondICmps(CmpPredicate LPred, const Value *L0, const Value *L1,
   }
 
   // (a - b) pred C -> a != b, if 0 pred C is false
-  // (ptrtoint(a) - ptrtoint(b)) pred C -> a != b, if 0 pred C is false
+  // (ptrtoaddr(a) - ptrtoaddr(b)) pred C -> a != b, if 0 pred C is false
   Value *A, *B;
   if (ICmpInst::isEquality(RPred) && cmpExcludesZero(LPred, L1) &&
-      match(L0, m_Sub(m_Value(A), m_Value(B))) &&
-      ((A == R0 && B == R1) || (A == R1 && B == R0) ||
-       (match(A, m_PtrToIntOrAddr(m_Specific(R0))) &&
-        match(B, m_PtrToIntOrAddr(m_Specific(R1)))) ||
-       (match(A, m_PtrToIntOrAddr(m_Specific(R1))) &&
-        match(B, m_PtrToIntOrAddr(m_Specific(R0)))))) {
-    return RPred.dropSameSign() == ICmpInst::ICMP_NE;
+      match(L0, m_Sub(m_Value(A), m_Value(B)))) {
+    if (R0->getType()->isPtrOrPtrVectorTy()) {
+      unsigned AddrBits = DL.getAddressSizeInBits(R0->getType());
+      if (L0->getType()->getScalarSizeInBits() <= AddrBits ||
+          DL.getPointerTypeSizeInBits(R0->getType()) == AddrBits) {
+        match(A, m_PtrToIntOrAddr(m_Value(A)));
+        match(B, m_PtrToIntOrAddr(m_Value(B)));
+      }
+    }
+    if ((A == R0 && B == R1) || (A == R1 && B == R0))
+      return RPred.dropSameSign() == ICmpInst::ICMP_NE;
   }
 
   // L0 = R0 = L1 + R1, L0 >=u L1 implies R0 >=u R1, L0 <u L1 implies R0 <u R1
