@@ -607,6 +607,101 @@ define i1 @ptrtoaddr_diff_non_equal_addrsize_commuted(ptr addrspace(1) %p0, ptr 
   ret i1 %cmp
 }
 
+define i1 @ptrtoint_diff_non_equal_equal_addrsize(ptr addrspace(1) %p0, ptr addrspace(1) %p1) {
+; CHECK-LABEL: define i1 @ptrtoint_diff_non_equal_equal_addrsize(
+; CHECK-SAME: ptr addrspace(1) [[P0:%.*]], ptr addrspace(1) [[P1:%.*]]) {
+; CHECK-NEXT:    [[I0:%.*]] = ptrtoint ptr addrspace(1) [[P0]] to i32
+; CHECK-NEXT:    [[I1:%.*]] = ptrtoint ptr addrspace(1) [[P1]] to i32
+; CHECK-NEXT:    [[DIFF:%.*]] = sub i32 [[I0]], [[I1]]
+; CHECK-NEXT:    [[COND:%.*]] = icmp eq i32 [[DIFF]], 12
+; CHECK-NEXT:    call void @llvm.assume(i1 [[COND]])
+; CHECK-NEXT:    ret i1 false
+;
+  %i0 = ptrtoint ptr addrspace(1) %p0 to i32
+  %i1 = ptrtoint ptr addrspace(1) %p1 to i32
+  %diff = sub i32 %i0, %i1
+  %cond = icmp eq i32 %diff, 12
+  call void @llvm.assume(i1 %cond)
+  %cmp = icmp eq ptr addrspace(1) %p0, %p1
+  ret i1 %cmp
+}
+
+define i1 @ptrtoint_diff_non_equal_smaller_addrsize(ptr addrspace(1) %p0, ptr addrspace(1) %p1) {
+; CHECK-LABEL: define i1 @ptrtoint_diff_non_equal_smaller_addrsize(
+; CHECK-SAME: ptr addrspace(1) [[P0:%.*]], ptr addrspace(1) [[P1:%.*]]) {
+; CHECK-NEXT:    [[I0:%.*]] = ptrtoint ptr addrspace(1) [[P0]] to i16
+; CHECK-NEXT:    [[I1:%.*]] = ptrtoint ptr addrspace(1) [[P1]] to i16
+; CHECK-NEXT:    [[DIFF:%.*]] = sub i16 [[I0]], [[I1]]
+; CHECK-NEXT:    [[COND:%.*]] = icmp eq i16 [[DIFF]], 12
+; CHECK-NEXT:    call void @llvm.assume(i1 [[COND]])
+; CHECK-NEXT:    ret i1 false
+;
+  %i0 = ptrtoint ptr addrspace(1) %p0 to i16
+  %i1 = ptrtoint ptr addrspace(1) %p1 to i16
+  %diff = sub i16 %i0, %i1
+  %cond = icmp eq i16 %diff, 12
+  call void @llvm.assume(i1 %cond)
+  %cmp = icmp eq ptr addrspace(1) %p0, %p1
+  ret i1 %cmp
+}
+
+define i1 @ptrtoint_diff_non_equal_larger_addrsize(ptr addrspace(1) %p0, ptr addrspace(1) %p1) {
+; CHECK-LABEL: define i1 @ptrtoint_diff_non_equal_larger_addrsize(
+; CHECK-SAME: ptr addrspace(1) [[P0:%.*]], ptr addrspace(1) [[P1:%.*]]) {
+; CHECK-NEXT:    [[I0:%.*]] = ptrtoint ptr addrspace(1) [[P0]] to i64
+; CHECK-NEXT:    [[I1:%.*]] = ptrtoint ptr addrspace(1) [[P1]] to i64
+; CHECK-NEXT:    [[DIFF:%.*]] = sub i64 [[I0]], [[I1]]
+; CHECK-NEXT:    [[COND:%.*]] = icmp eq i64 [[DIFF]], 12
+; CHECK-NEXT:    call void @llvm.assume(i1 [[COND]])
+; CHECK-NEXT:    ret i1 false
+;
+  %i0 = ptrtoint ptr addrspace(1) %p0 to i64
+  %i1 = ptrtoint ptr addrspace(1) %p1 to i64
+  %diff = sub i64 %i0, %i1
+  %cond = icmp eq i64 %diff, 12
+  call void @llvm.assume(i1 %cond)
+  %cmp = icmp eq ptr addrspace(1) %p0, %p1
+  ret i1 %cmp
+}
+
+define i1 @ptrtoint_diff_non_equal_zext(ptr %p0, ptr %p1) {
+; CHECK-LABEL: define i1 @ptrtoint_diff_non_equal_zext(
+; CHECK-SAME: ptr [[P0:%.*]], ptr [[P1:%.*]]) {
+; CHECK-NEXT:    [[I0:%.*]] = ptrtoint ptr [[P0]] to i128
+; CHECK-NEXT:    [[I1:%.*]] = ptrtoint ptr [[P1]] to i128
+; CHECK-NEXT:    [[DIFF:%.*]] = sub i128 [[I0]], [[I1]]
+; CHECK-NEXT:    [[COND:%.*]] = icmp eq i128 [[DIFF]], 12
+; CHECK-NEXT:    call void @llvm.assume(i1 [[COND]])
+; CHECK-NEXT:    ret i1 false
+;
+  %i0 = ptrtoint ptr %p0 to i128
+  %i1 = ptrtoint ptr %p1 to i128
+  %diff = sub i128 %i0, %i1
+  %cond = icmp eq i128 %diff, 12
+  call void @llvm.assume(i1 %cond)
+  %cmp = icmp eq ptr %p0, %p1
+  ret i1 %cmp
+}
+
+define i1 @ptrtoint_ptrtoaddr_diff_non_equal_addrsize(ptr addrspace(1) %p0, ptr addrspace(1) %p1) {
+; CHECK-LABEL: define i1 @ptrtoint_ptrtoaddr_diff_non_equal_addrsize(
+; CHECK-SAME: ptr addrspace(1) [[P0:%.*]], ptr addrspace(1) [[P1:%.*]]) {
+; CHECK-NEXT:    [[I0:%.*]] = ptrtoint ptr addrspace(1) [[P0]] to i32
+; CHECK-NEXT:    [[I1:%.*]] = ptrtoaddr ptr addrspace(1) [[P1]] to i32
+; CHECK-NEXT:    [[DIFF:%.*]] = sub i32 [[I0]], [[I1]]
+; CHECK-NEXT:    [[COND:%.*]] = icmp eq i32 [[DIFF]], 12
+; CHECK-NEXT:    call void @llvm.assume(i1 [[COND]])
+; CHECK-NEXT:    ret i1 false
+;
+  %i0 = ptrtoint ptr addrspace(1) %p0 to i32
+  %i1 = ptrtoaddr ptr addrspace(1) %p1 to i32
+  %diff = sub i32 %i0, %i1
+  %cond = icmp eq i32 %diff, 12
+  call void @llvm.assume(i1 %cond)
+  %cmp = icmp eq ptr addrspace(1) %p0, %p1
+  ret i1 %cmp
+}
+
 ; An offset that stays within the object cannot produce a null address, because
 ; no allocated object crosses the unsigned address space boundary.
 define i1 @addr_plus_offset_inrange() {
